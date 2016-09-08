@@ -5,9 +5,15 @@ var cheerio = require('cheerio')    //向jq一样操纵数据
 var fs = require('fs')
 
 var app = express()
-var fetchUrl = 'http://jandan.net/ooxx/page-1319'
+
+//演示用的  http://jandan.net/ooxx/page-1319
+//乐铺 http://www.lepu.cn/
+// http://www.lepu.cn/shop/
+var fetchUrl = 'http://www.lepu.cn/shop/'
 var dir = './images'
 var counter = 1
+
+var randomPre = 'dl' + parseInt(Math.random()*100000) + '-'
 
 app.get('/', function(req, res, next) {
   request.get(fetchUrl)
@@ -22,7 +28,11 @@ app.get('/', function(req, res, next) {
         var $element = $(element)
         const imgUrl = $element.attr('src')
         items.push(imgUrl)
-        download(imgUrl, dir, counter + imgUrl.substr(-4, 4))
+        if(imgUrl.charAt(-4) !== '.') {
+          download(imgUrl, dir, randomPre + counter + '.png')
+        } else {
+          download(imgUrl, dir, randomPre + counter + imgUrl.substr(-4, 4))
+        }
         counter++
       })
 
