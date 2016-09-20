@@ -39,24 +39,25 @@ app.get('/', function(req, res, next) {
 
         for(var i = 0 ; i < curImgUrls.length ; i++){
           var curImgUrl = curImgUrls.eq(i).attr('src')
-          console.log('curImgUrl:', curImgUrl)
           imgUrlsArray.push(curImgUrl)
-          download(curImgUrl, dir ,randomPre + counter + curImgUrl.substr(-4, 4))
-          counter++;
-          // ep.emit('imgUrlGet', cureImgUrl)
+          // download(curImgUrl, dir ,randomPre + counter + curImgUrl.substr(-4, 4))
+          // counter++;
+          ep.emit('imgUrlGet', curImgUrl)
         }
       })
   })
 
-  // ep.after('imgUrlGet', imgUrlsArray.length, function(curImgUrl) {
-  //   // console.log('curImgUrl:', curImgUrl)
+  // 这里curImgUrls是 cureImgUrl数组, 这里控制了并发
+  ep.after('imgUrlGet', imgUrlsArray.length, function(curImgUrls) {
+    console.log('curImgUrls:', curImgUrls)
 
-  //   if(curImgUrl.length !== 0) {
-  //     download(curImgUrl, randomPre + counter + curImgUrl.substr(-4, 4))
-  //   }
-
-  //   counter++;
-  // })
+    curImgUrls.map(function(curImgUrl) {
+      if(curImgUrl.length !== 0) {
+        download(curImgUrl, dir ,randomPre + counter + curImgUrl.substr(-4, 4))
+      }
+      counter++;
+    })
+  })
 
 })
 
